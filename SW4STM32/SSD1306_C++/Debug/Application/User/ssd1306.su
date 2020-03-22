@@ -1,15 +1,15 @@
-SSD1306.cpp:259:1:SSD1306::SSD1306::~SSD1306()	0	static
-SSD1306.cpp:259:1:virtual SSD1306::SSD1306::~SSD1306()	8	static
-SSD1306.cpp:263:1:void __static_initialization_and_destruction_0(int, int)	8	static
-SSD1306.cpp:26:6:void SSD1306::SSD1306::ssd1306_Reset()	8	static
-SSD1306.cpp:37:6:void SSD1306::SSD1306::ssd1306_WriteCommand(uint8_t)	24	static
-SSD1306.cpp:44:6:void SSD1306::SSD1306::ssd1306_WriteData(uint8_t*, size_t)	16	static
-SSD1306.cpp:150:6:void SSD1306::SSD1306::ssd1306_Fill(SSD1306_COLOR)	0	static
-SSD1306.cpp:160:6:void SSD1306::SSD1306::ssd1306_UpdateScreen()	16	static
-SSD1306.cpp:58:6:void SSD1306::SSD1306::ssd1306_Init()	8	static
-SSD1306.cpp:174:6:void SSD1306::SSD1306::ssd1306_DrawPixel(uint8_t, uint8_t, SSD1306_COLOR)	0	static
-SSD1306.cpp:197:6:char SSD1306::SSD1306::ssd1306_WriteChar(char, FontDef, SSD1306_COLOR)	56	static
-SSD1306.cpp:232:6:char SSD1306::SSD1306::ssd1306_WriteString(char*, FontDef, SSD1306_COLOR)	32	static
-SSD1306.cpp:249:6:void SSD1306::SSD1306::ssd1306_SetCursor(uint8_t, uint8_t)	0	static
-SSD1306.cpp:254:1:SSD1306::SSD1306::SSD1306()	0	static
-SSD1306.cpp:263:1:cpp)	8	static
+SSD1306.cpp:257:1:SSD1306::~SSD1306()	0	static
+SSD1306.cpp:257:1:virtual SSD1306::~SSD1306()	8	static
+SSD1306.cpp:259:1:void __static_initialization_and_destruction_0(int, int)	8	static
+SSD1306.cpp:24:6:void SSD1306::ssd1306_Reset()	8	static
+SSD1306.cpp:35:6:void SSD1306::ssd1306_WriteCommand(uint8_t)	24	static
+SSD1306.cpp:42:6:void SSD1306::ssd1306_WriteData(uint8_t*, size_t)	16	static
+SSD1306.cpp:148:6:void SSD1306::ssd1306_Fill(SSD1306_COLOR)	0	static
+SSD1306.cpp:158:6:void SSD1306::ssd1306_UpdateScreen()	16	static
+SSD1306.cpp:56:6:void SSD1306::ssd1306_Init()	8	static
+SSD1306.cpp:172:6:void SSD1306::ssd1306_DrawPixel(uint8_t, uint8_t, SSD1306_COLOR)	0	static
+SSD1306.cpp:195:6:char SSD1306::ssd1306_WriteChar(char, FontDef, SSD1306_COLOR)	56	static
+SSD1306.cpp:230:6:char SSD1306::ssd1306_WriteString(char*, FontDef, SSD1306_COLOR)	32	static
+SSD1306.cpp:247:6:void SSD1306::ssd1306_SetCursor(uint8_t, uint8_t)	0	static
+SSD1306.cpp:252:1:SSD1306::SSD1306()	0	static
+SSD1306.cpp:259:1:cpp)	8	static

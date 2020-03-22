@@ -94,10 +94,12 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  SSD1306 *ssd1306=new SSD1306();
-  ssd1306->ssd1306_Init();
-  ssd1306->ssd1306_Fill(White);
-  ssd1306->ssd1306_UpdateScreen();
+  SSD1306 oled;
+  oled.ssd1306_Init();
+  oled.ssd1306_Fill(White);
+  oled.ssd1306_WriteString("Thanks",Font_16x26,Black);
+  HAL_Delay(1000);
+  oled.ssd1306_UpdateScreen();
   /* USER CODE END 2 */
 
   /* Infinite loop */

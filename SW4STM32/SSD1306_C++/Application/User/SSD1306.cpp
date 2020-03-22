@@ -7,8 +7,6 @@
 
 #include "SSD1306.h"
 
-namespace SSD1306 {
-
 #if defined(SSD1306_USE_I2C)
 void SSD1306::ssd1306_Reset(void) {
 	/* for I2C - do nothing */
@@ -259,5 +257,3 @@ SSD1306::SSD1306() {
 SSD1306::~SSD1306() {
 	// TODO Auto-generated destructor stub
 }
-
-} /* namespace SSD1306 */

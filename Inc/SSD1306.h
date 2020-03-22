@@ -15,6 +15,7 @@
 #include "_ansi.h"
 #include "SSD1306_font.h"
 
+
 #define STM32F3
 #if defined(STM32F1)
 #include "stm32f1xx_hal.h"
@@ -100,8 +101,6 @@ typedef enum {
 
 // Struct to store transformations
 
-namespace SSD1306 {
-
 class SSD1306 {
 public:
 	SSD1306();
@@ -126,7 +125,6 @@ private:
     uint8_t Initialized;
 };
 
-} /* namespace SSD1306 */
 
 #endif /* APPLICATION_USER_SSD1306_H_ */
 #endif // __SSD1306_H__
