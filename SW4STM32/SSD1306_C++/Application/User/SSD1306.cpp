@@ -138,10 +138,10 @@ void SSD1306::ssd1306_Init(void) {
     ssd1306_UpdateScreen();
 
     // Set default values for screen object
-    CurrentX = 0;
-    CurrentY = 0;
+    currentX = 0;
+    currentY = 0;
 
-    Initialized = 1;
+    initialized = 1;
 }
 
 // Fill the whole screen with the given color
@@ -176,7 +176,7 @@ void SSD1306::ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color) {
     }
 
     // Check if pixel should be inverted
-    if(Inverted) {
+    if(inverted) {
         color = (SSD1306_COLOR)!color;
     }
 
@@ -200,8 +200,8 @@ char SSD1306::ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
         return 0;
 
     // Check remaining space on current line
-    if (SSD1306_WIDTH < (CurrentX + Font.FontWidth) ||
-        SSD1306_HEIGHT < (CurrentY + Font.FontHeight))
+    if (SSD1306_WIDTH < (currentX + Font.FontWidth) ||
+        SSD1306_HEIGHT < (currentY + Font.FontHeight))
     {
         // Not enough space on current line
         return 0;
@@ -212,15 +212,15 @@ char SSD1306::ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color) {
         b = Font.data[(ch - 32) * Font.FontHeight + i];
         for(j = 0; j < Font.FontWidth; j++) {
             if((b << j) & 0x8000)  {
-                ssd1306_DrawPixel(CurrentX + j, (CurrentY + i), (SSD1306_COLOR) color);
+                ssd1306_DrawPixel(currentX + j, (currentY + i), (SSD1306_COLOR) color);
             } else {
-                ssd1306_DrawPixel(CurrentX + j, (CurrentY + i), (SSD1306_COLOR)!color);
+                ssd1306_DrawPixel(currentX + j, (currentY + i), (SSD1306_COLOR)!color);
             }
         }
     }
 
     // The current space is now taken
-    CurrentX += Font.FontWidth;
+    currentX += Font.FontWidth;
 
     // Return written char for validation
     return ch;
@@ -245,8 +245,8 @@ char SSD1306::ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color) 
 
 // Position the cursor
 void SSD1306::ssd1306_SetCursor(uint8_t x, uint8_t y) {
-    CurrentX = x;
-    CurrentY = y;
+    currentX = x;
+    currentY = y;
 }
 
 SSD1306::SSD1306() {

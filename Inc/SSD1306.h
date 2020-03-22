@@ -119,10 +119,10 @@ public:
 	void ssd1306_WriteCommand(uint8_t byte);
 	void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
 private:
-    uint16_t CurrentX;
-    uint16_t CurrentY;
-    uint8_t Inverted;
-    uint8_t Initialized;
+    uint16_t currentX;
+    uint16_t currentY;
+    uint8_t inverted;
+    uint8_t initialized;
 };
 
 
