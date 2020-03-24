@@ -144,6 +144,14 @@ void SSD1306::ssd1306_Init(void) {
     initialized = 1;
 }
 
+void SSD1306::process(){
+	//components to display
+
+
+	ssd1306_UpdateScreen();
+	HAL_Delay(5);
+}
+
 // Fill the whole screen with the given color
 void SSD1306::ssd1306_Fill(SSD1306_COLOR color) {
     /* Set memory */
@@ -251,7 +259,6 @@ void SSD1306::ssd1306_SetCursor(uint8_t x, uint8_t y) {
 
 SSD1306::SSD1306() {
 	// TODO Auto-generated constructor stub
-
 }
 
 SSD1306::~SSD1306() {
