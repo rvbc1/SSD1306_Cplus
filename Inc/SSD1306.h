@@ -124,6 +124,18 @@ private:
     uint16_t currentY;
     uint8_t inverted;
     uint8_t initialized;
+
+    struct Buffor{
+	uint8_t registers[31];
+	uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+    };
+
+    union Union{
+    	struct Buffor buffor;
+    	uint8_t pointer;
+    };
+
+    union Union registersAndBuffor;
 };
 
 

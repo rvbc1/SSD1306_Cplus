@@ -11,8 +11,8 @@
 void SSD1306::ssd1306_Reset(void) {
 	/* for I2C - do nothing */
 }
-// Send a byte to the command register
-void SSD1306::ssd1306_WriteCommand(uint8_t byte) {
+// Send a byte to the command registers
+void SSD1306::registersAndBuffor.buffor.registerss[](uint8_t byte) {
 	HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x00, 1, &byte, 1, HAL_MAX_DELAY);
 }
 // Send data
@@ -31,7 +31,7 @@ void SSD1306::ssd1306_Reset(void) {
 	HAL_GPIO_WritePin(SSD1306_Reset_Port, SSD1306_Reset_Pin, GPIO_PIN_SET);
 	HAL_Delay(10);
 }
-// Send a byte to the command register
+// Send a byte to the command registers
 void SSD1306::ssd1306_WriteCommand(uint8_t byte) {
     HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_RESET); // select OLED
     HAL_GPIO_WritePin(SSD1306_DC_Port, SSD1306_DC_Pin, GPIO_PIN_RESET); // command
@@ -51,7 +51,6 @@ void SSD1306::ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
 #endif
 
 // Screenbuffer
-static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
 
 void SSD1306::ssd1306_Init(void) {
 	// Reset OLED
@@ -61,81 +60,81 @@ void SSD1306::ssd1306_Init(void) {
     HAL_Delay(100);
 
     // Init OLED
-    ssd1306_WriteCommand(0xAE); //display off
+    registersAndBuffor.buffor.registers[0]=0xAE; //display off
 
-    ssd1306_WriteCommand(0x20); //Set Memory Addressing Mode
-    ssd1306_WriteCommand(0x00); // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
+    registersAndBuffor.buffor.registers[1]=0x20; //Set Memory Addressing Mode
+    registersAndBuffor.buffor.registers[2]=0x00; // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
                                 // 10b,Page Addressing Mode (RESET); 11b,Invalid
 
-    ssd1306_WriteCommand(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
+    registersAndBuffor.buffor.registers[3]=0xB0; //Set Page Start Address for Page Addressing Mode,0-7
 
 	#ifdef SSD1306_MIRROR_VERT
-		ssd1306_WriteCommand(0xC0); // Mirror vertically
+		registersAndBuffor.buffor.registers[4]=0xC0; // Mirror vertically
 	#else
-		ssd1306_WriteCommand(0xC8); //Set COM Output Scan Direction
+		registersAndBuffor.buffor.registers[4]=0xC8; //Set COM Output Scan Direction
 	#endif
 
-    ssd1306_WriteCommand(0x00); //---set low column address
-    ssd1306_WriteCommand(0x10); //---set high column address
+    registersAndBuffor.buffor.registers[5]=0x00; //---set low column address
+    registersAndBuffor.buffor.registers[6]=0x10; //---set high column address
 
-    ssd1306_WriteCommand(0x40); //--set start line address - CHECK
+    registersAndBuffor.buffor.registers[7]=0x40; //--set start line address - CHECK
 
-    ssd1306_WriteCommand(0x81); //--set contrast control register - CHECK
-    ssd1306_WriteCommand(0xFF);
+    registersAndBuffor.buffor.registers[8]=0x81; //--set contrast control registers - CHECK
+    registersAndBuffor.buffor.registers[9]=0xFF;
 
 	#ifdef SSD1306_MIRROR_HORIZ
-		ssd1306_WriteCommand(0xA0); // Mirror horizontally
+		registersAndBuffor.buffor.registers[10]=0xA0; // Mirror horizontally
 	#else
-		ssd1306_WriteCommand(0xA1); //--set segment re-map 0 to 127 - CHECK
+		registersAndBuffor.buffor.registers[10]=0xA1; //--set segment re-map 0 to 127 - CHECK
 	#endif
 
 	#ifdef SSD1306_INVERSE_COLOR
-		ssd1306_WriteCommand(0xA7); //--set inverse color
+		registersAndBuffor.buffor.registers[11]=0xA7; //--set inverse color
 	#else
-		ssd1306_WriteCommand(0xA6); //--set normal color
+		registersAndBuffor.buffor.registers[11]=0xA6; //--set normal color
 	#endif
 
-    ssd1306_WriteCommand(0xA8); //--set multiplex ratio(1 to 64) - CHECK
+    registersAndBuffor.buffor.registers[12]=0xA8; //--set multiplex ratio(1 to 64) - CHECK
 	#if (SSD1306_HEIGHT == 32)
-		ssd1306_WriteCommand(0x1F); //
+		registersAndBuffor.buffor.registers[13]=0x1F; //
 	#elif (SSD1306_HEIGHT == 64)
-		ssd1306_WriteCommand(0x3F); //
+		registersAndBuffor.buffor.registers[13]=0x3F; //
 	#else
 	#error "Only 32 or 64 lines of height are supported!"
 	#endif
 
-    ssd1306_WriteCommand(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+    registersAndBuffor.buffor.registers[14]=0xA4; //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
 
-    ssd1306_WriteCommand(0xD3); //-set display offset - CHECK
-    ssd1306_WriteCommand(0x00); //-not offset
+    registersAndBuffor.buffor.registers[15]=0xD3; //-set display offset - CHECK
+    registersAndBuffor.buffor.registers[16]=0x00; //-not offset
 
-    ssd1306_WriteCommand(0xD5); //--set display clock divide ratio/oscillator frequency
-    ssd1306_WriteCommand(0xF0); //--set divide ratio
+    registersAndBuffor.buffor.registers[17]=0xD5; //--set display clock divide ratio/oscillator frequency
+    registersAndBuffor.buffor.registers[18]=0xF0; //--set divide ratio
 
-    ssd1306_WriteCommand(0xD9); //--set pre-charge period
-    ssd1306_WriteCommand(0x22); //
+    registersAndBuffor.buffor.registers[19]=0xD9; //--set pre-charge period
+    registersAndBuffor.buffor.registers[20]=0x22; //
 
-    ssd1306_WriteCommand(0xDA); //--set com pins hardware configuration - CHECK
+    registersAndBuffor.buffor.registers[21]=0xDA; //--set com pins hardware configuration - CHECK
 	#if (SSD1306_HEIGHT == 32)
-		ssd1306_WriteCommand(0x02);
+		registersAndBuffor.buffor.registers[22]=0x02;
 	#elif (SSD1306_HEIGHT == 64)
-		ssd1306_WriteCommand(0x12);
+		registersAndBuffor.buffor.registers[22]=0x12;
 	#else
 	#error "Only 32 or 64 lines of height are supported!"
 	#endif
 
-    ssd1306_WriteCommand(0xDB); //--set vcomh
-    ssd1306_WriteCommand(0x20); //0x20,0.77xVcc
+    registersAndBuffor.buffor.registers[23]=0xDB; //--set vcomh
+    registersAndBuffor.buffor.registers[24]=0x20; //0x20,0.77xVcc
 
-    ssd1306_WriteCommand(0x8D); //--set DC-DC enable
-    ssd1306_WriteCommand(0x14); //
-    ssd1306_WriteCommand(0xAF); //--turn on SSD1306 panel
+    registersAndBuffor.buffor.registers[25]=0x8D; //--set DC-DC enable
+    registersAndBuffor.buffor.registers[26]=0x14; //
+    registersAndBuffor.buffor.registers[27]=0xAF; //--turn on SSD1306 panel
 
     // Clear screen
     ssd1306_Fill(Black);
 
     // Flush buffer to screen
-    ssd1306_UpdateScreen();
+    //ssd1306_UpdateScreen();
 
     // Set default values for screen object
     currentX = 0;
@@ -156,9 +155,13 @@ void SSD1306::process(){
 void SSD1306::ssd1306_Fill(SSD1306_COLOR color) {
     /* Set memory */
     uint32_t i;
-
-    for(i = 0; i < sizeof(SSD1306_Buffer); i++) {
-        SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
+    for(int j=0; j<8; j++){
+        registersAndBuffor.buffor.registers[28]=0xB0 + j;
+        registersAndBuffor.buffor.registers[29]=0x00;
+        registersAndBuffor.buffor.registers[30]=0x10;
+		for(i = 0; i < sizeof(registersAndBuffor.buffor.SSD1306_Buffer)/8; i++) {
+			registersAndBuffor.buffor.SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
+		}
     }
 }
 
@@ -166,10 +169,10 @@ void SSD1306::ssd1306_Fill(SSD1306_COLOR color) {
 void SSD1306::ssd1306_UpdateScreen(void) {
     uint8_t i;
     for(i = 0; i < 8; i++) {
-        ssd1306_WriteCommand(0xB0 + i);
-        ssd1306_WriteCommand(0x00);
-        ssd1306_WriteCommand(0x10);
-        ssd1306_WriteData(&SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
+        registersAndBuffor.buffor.registers[28]=0xB0 + i;
+        registersAndBuffor.buffor.registers[29]=0x00;
+        registersAndBuffor.buffor.registers[30]=0x10;
+        ssd1306_WriteData(&registersAndBuffor.buffor.SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
     }
 }
 
@@ -189,11 +192,15 @@ void SSD1306::ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color) {
     }
 
     // Draw in the right color
-    if(color == White) {
-        SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] |= 1 << (y % 8);
-    } else {
-        SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH] &= ~(1 << (y % 8));
-    }
+    	int j=(int)y/8.;
+        registersAndBuffor.buffor.registers[28]=0xB0 + j;
+        registersAndBuffor.buffor.registers[29]=0x00;
+        registersAndBuffor.buffor.registers[30]=0x10;
+		if(color == White) {
+			registersAndBuffor.buffor.SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH/8] |= 1 << (y % 8);
+		} else {
+			registersAndBuffor.buffor.SSD1306_Buffer[x + (y / 8) * SSD1306_WIDTH/8] &= ~(1 << (y % 8));
+		}
 }
 
 // Draw 1 char to the screen buffer
