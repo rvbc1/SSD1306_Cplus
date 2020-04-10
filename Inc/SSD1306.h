@@ -114,13 +114,13 @@ public:
 	char ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color);
 	void ssd1306_SetCursor(uint8_t x, uint8_t y);
 	void process(void);
+	void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
 
 	// Low-level procedures
 	void ssd1306_Reset(void);
 	void ssd1306_WriteCommand();
 	void ssd1306_WriteData();
 private:
-	void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
     uint16_t currentX;
     uint16_t currentY;
     uint8_t inverted;
@@ -131,7 +131,6 @@ private:
     uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT /8];
     uint8_t counter;
 };
-
 
 #endif /* APPLICATION_USER_SSD1306_H_ */
 #endif // __SSD1306_H__

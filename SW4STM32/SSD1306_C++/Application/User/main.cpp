@@ -48,7 +48,7 @@ SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi2_tx;
 
 /* USER CODE BEGIN PV */
-
+SSD1306 oled;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +56,9 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_SPI2_Init(void);
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
+	oled.HAL_SPI_TxCpltCallback(hspi);
+};
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -97,7 +100,6 @@ int main(void)
   MX_DMA_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-  SSD1306 oled;
   oled.ssd1306_Init();
   oled.ssd1306_Fill(White);
   oled.ssd1306_WriteString("////",Font_7x10,Black);

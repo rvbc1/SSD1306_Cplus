@@ -64,7 +64,6 @@ void SSD1306::HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
 	if (counter==8)
 		counter=0;
 }
-
 void SSD1306::ssd1306_Init(void) {
 	// Reset OLED
 	ssd1306_Reset();
