@@ -23,10 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "ssd1306.h"
-#include "ssd1306_fonts.h"
-#include "ssd1306_tests.h"
-
+#include "SSD1306_font.h"
+#include "SSD1306.h"
 
 /* USER CODE END Includes */
 
@@ -47,6 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi2;
+DMA_HandleTypeDef hdma_spi2_tx;
 
 /* USER CODE BEGIN PV */
 
@@ -55,6 +54,7 @@ SPI_HandleTypeDef hspi2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_SPI2_Init(void);
 /* USER CODE BEGIN PFP */
 
@@ -94,11 +94,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-
-  ssd1306_Init();
-  ssd1306_TestAll();
+  SSD1306 oled;
+  oled.ssd1306_Init();
+  oled.ssd1306_Fill(White);
+  oled.ssd1306_WriteString("ThanksThanksThanksThanks",Font_7x10,Black);
+  oled.ssd1306_SetCursor(0,15);
+  oled.ssd1306_WriteString("ThanksThanksThanksThanks",Font_7x10,Black);
+  oled.ssd1306_SetCursor(0,30);
+  oled.ssd1306_WriteString("ThanksThanksThanksThanks",Font_7x10,Black);
+  oled.ssd1306_SetCursor(0,45);
+  oled.ssd1306_WriteString("ThanksThanksThanksThanks",Font_7x10,Black);
+  HAL_Delay(1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -186,6 +195,22 @@ static void MX_SPI2_Init(void)
   /* USER CODE BEGIN SPI2_Init 2 */
 
   /* USER CODE END SPI2_Init 2 */
+
+}
+
+/** 
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void) 
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Channel5_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Channel5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Channel5_IRQn);
 
 }
 

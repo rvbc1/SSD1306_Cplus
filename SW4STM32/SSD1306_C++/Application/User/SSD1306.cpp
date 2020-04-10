@@ -7,20 +7,20 @@
 
 #include "SSD1306.h"
 
-#if defined(SSD1306_USE_I2C)
-void SSD1306::ssd1306_Reset(void) {
+//#if defined(SSD1306_USE_I2C)
+//void SSD1306::ssd1306_Reset(void) {
 	/* for I2C - do nothing */
-}
+//}
 // Send a byte to the command register
-void SSD1306::ssd1306_WriteCommand(uint8_t byte) {
-	HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x00, 1, &byte, 1, HAL_MAX_DELAY);
-}
+//void SSD1306::ssd1306_WriteCommand(uint8_t byte) {
+//	HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x00, 1, &byte, 1, HAL_MAX_DELAY);
+//}
 // Send data
-void SSD1306::ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
-	HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
-}
+//void SSD1306::ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
+//	HAL_I2C_Mem_Write(&SSD1306_I2C_PORT, SSD1306_I2C_ADDR, 0x40, 1, buffer, buff_size, HAL_MAX_DELAY);
+//}
 
-#elif defined(SSD1306_USE_SPI)
+//#elif defined(SSD1306_USE_SPI)
 void SSD1306::ssd1306_Reset(void) {
 	// CS = High (not selected)
 	HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_SET);
@@ -32,110 +32,122 @@ void SSD1306::ssd1306_Reset(void) {
 	HAL_Delay(10);
 }
 // Send a byte to the command register
-void SSD1306::ssd1306_WriteCommand(uint8_t byte) {
+void SSD1306::ssd1306_WriteCommand() {
     HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_RESET); // select OLED
     HAL_GPIO_WritePin(SSD1306_DC_Port, SSD1306_DC_Pin, GPIO_PIN_RESET); // command
-    HAL_SPI_Transmit(&SSD1306_SPI_PORT, (uint8_t *) &byte, 1, HAL_MAX_DELAY);
-    HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_SET); // un-select OLED
+	HAL_SPI_Transmit(&SSD1306_SPI_PORT, lineCommands, 3, HAL_MAX_DELAY);
 }
 // Send data
-void SSD1306::ssd1306_WriteData(uint8_t* buffer, size_t buff_size) {
+void SSD1306::ssd1306_WriteData() {
     HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_RESET); // select OLED
     HAL_GPIO_WritePin(SSD1306_DC_Port, SSD1306_DC_Pin, GPIO_PIN_SET); // data
-    HAL_SPI_Transmit(&SSD1306_SPI_PORT, buffer, buff_size, HAL_MAX_DELAY);
-    HAL_GPIO_WritePin(SSD1306_CS_Port, SSD1306_CS_Pin, GPIO_PIN_SET); // un-select OLED
+	HAL_SPI_Transmit_DMA(&SSD1306_SPI_PORT, &SSD1306_Buffer[SSD1306_WIDTH*counter], SSD1306_WIDTH);
 }
 
-#else
-#error "You should define SSD1306_USE_SPI or SSD1306_USE_I2C macro"
-#endif
+//#else
+//#error "You should define SSD1306_USE_SPI or SSD1306_USE_I2C macro"
+//#endif
 
-// Screenbuffer
-static uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+void SSD1306::HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi){
+	if (status==0){
+		status=1;
+        lineCommands[0]=0xB0 + counter;
+        lineCommands[1]=0x00;
+        lineCommands[2]=0x10;
+		ssd1306_WriteCommand();
+	}
+	if (status==1){
+		status=0;
+		ssd1306_WriteData();
+	}
+	counter+=1;
+	if (counter==8)
+		counter=0;
+}
 
 void SSD1306::ssd1306_Init(void) {
 	// Reset OLED
 	ssd1306_Reset();
-
     // Wait for the screen to boot
     HAL_Delay(100);
 
     // Init OLED
-    ssd1306_WriteCommand(0xAE); //display off
+    initCommands[0]=0xAE; //display off
 
-    ssd1306_WriteCommand(0x20); //Set Memory Addressing Mode
-    ssd1306_WriteCommand(0x00); // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
+    initCommands[1]=0x20; //Set Memory Addressing Mode
+    initCommands[2]=0x00; // 00b,Horizontal Addressing Mode; 01b,Vertical Addressing Mode;
                                 // 10b,Page Addressing Mode (RESET); 11b,Invalid
 
-    ssd1306_WriteCommand(0xB0); //Set Page Start Address for Page Addressing Mode,0-7
+    initCommands[3]=0xB0; //Set Page Start Address for Page Addressing Mode,0-7
 
 	#ifdef SSD1306_MIRROR_VERT
-		ssd1306_WriteCommand(0xC0); // Mirror vertically
+		initCommands[4]=0xC0; // Mirror vertically
 	#else
-		ssd1306_WriteCommand(0xC8); //Set COM Output Scan Direction
+		initCommands[4]=0xC8; //Set COM Output Scan Direction
 	#endif
 
-    ssd1306_WriteCommand(0x00); //---set low column address
-    ssd1306_WriteCommand(0x10); //---set high column address
+    initCommands[5]=0x00; //---set low column address
+    initCommands[6]=0x10; //---set high column address
 
-    ssd1306_WriteCommand(0x40); //--set start line address - CHECK
+    initCommands[7]=0x40; //--set start line address - CHECK
 
-    ssd1306_WriteCommand(0x81); //--set contrast control register - CHECK
-    ssd1306_WriteCommand(0xFF);
+    initCommands[8]=0x81; //--set contrast control register - CHECK
+    initCommands[9]=0xFF;
 
 	#ifdef SSD1306_MIRROR_HORIZ
-		ssd1306_WriteCommand(0xA0); // Mirror horizontally
+		initCommands[10]=0xA0; // Mirror horizontally
 	#else
-		ssd1306_WriteCommand(0xA1); //--set segment re-map 0 to 127 - CHECK
+		initCommands[10]=0xA1; //--set segment re-map 0 to 127 - CHECK
 	#endif
 
 	#ifdef SSD1306_INVERSE_COLOR
-		ssd1306_WriteCommand(0xA7); //--set inverse color
+		initCommands[11]=0xA7; //--set inverse color
 	#else
-		ssd1306_WriteCommand(0xA6); //--set normal color
+		initCommands[11]=0xA6; //--set normal color
 	#endif
 
-    ssd1306_WriteCommand(0xA8); //--set multiplex ratio(1 to 64) - CHECK
+    initCommands[12]=0xA8; //--set multiplex ratio(1 to 64) - CHECK
 	#if (SSD1306_HEIGHT == 32)
-		ssd1306_WriteCommand(0x1F); //
+		initCommands[13]=0x1F; //
 	#elif (SSD1306_HEIGHT == 64)
-		ssd1306_WriteCommand(0x3F); //
+		initCommands[13]=0x3F; //
 	#else
 	#error "Only 32 or 64 lines of height are supported!"
 	#endif
 
-    ssd1306_WriteCommand(0xA4); //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
+    initCommands[14]=0xA4; //0xa4,Output follows RAM content;0xa5,Output ignores RAM content
 
-    ssd1306_WriteCommand(0xD3); //-set display offset - CHECK
-    ssd1306_WriteCommand(0x00); //-not offset
+    initCommands[15]=0xD3; //-set display offset - CHECK
+    initCommands[16]=0x00; //-not offset
 
-    ssd1306_WriteCommand(0xD5); //--set display clock divide ratio/oscillator frequency
-    ssd1306_WriteCommand(0xF0); //--set divide ratio
+    initCommands[17]=0xD5; //--set display clock divide ratio/oscillator frequency
+    initCommands[18]=0xF0; //--set divide ratio
 
-    ssd1306_WriteCommand(0xD9); //--set pre-charge period
-    ssd1306_WriteCommand(0x22); //
+    initCommands[19]=0xD9; //--set pre-charge period
+    initCommands[20]=0x22; //
 
-    ssd1306_WriteCommand(0xDA); //--set com pins hardware configuration - CHECK
+    initCommands[21]=0xDA; //--set com pins hardware configuration - CHECK
 	#if (SSD1306_HEIGHT == 32)
-		ssd1306_WriteCommand(0x02);
+		initCommands[22]=0x02;
 	#elif (SSD1306_HEIGHT == 64)
-		ssd1306_WriteCommand(0x12);
+		initCommands[22]=0x12;
 	#else
 	#error "Only 32 or 64 lines of height are supported!"
 	#endif
 
-    ssd1306_WriteCommand(0xDB); //--set vcomh
-    ssd1306_WriteCommand(0x20); //0x20,0.77xVcc
+    initCommands[23]=0xDB; //--set vcomh
+    initCommands[24]=0x20; //0x20,0.77xVcc
 
-    ssd1306_WriteCommand(0x8D); //--set DC-DC enable
-    ssd1306_WriteCommand(0x14); //
-    ssd1306_WriteCommand(0xAF); //--turn on SSD1306 panel
+    initCommands[25]=0x8D; //--set DC-DC enable
+    initCommands[26]=0x14; //
+    initCommands[27]=0xAF; //--turn on SSD1306 panel
+    status=0;
+    HAL_SPI_Transmit_DMA(&SSD1306_SPI_PORT, initCommands, 28); // <---------
 
     // Clear screen
     ssd1306_Fill(Black);
 
     // Flush buffer to screen
-    ssd1306_UpdateScreen();
 
     // Set default values for screen object
     currentX = 0;
@@ -148,7 +160,6 @@ void SSD1306::process(){
 	//components to display
 
 
-	ssd1306_UpdateScreen();
 	HAL_Delay(5);
 }
 
@@ -159,17 +170,6 @@ void SSD1306::ssd1306_Fill(SSD1306_COLOR color) {
 
     for(i = 0; i < sizeof(SSD1306_Buffer); i++) {
         SSD1306_Buffer[i] = (color == Black) ? 0x00 : 0xFF;
-    }
-}
-
-// Write the screenbuffer with changed to the screen
-void SSD1306::ssd1306_UpdateScreen(void) {
-    uint8_t i;
-    for(i = 0; i < 8; i++) {
-        ssd1306_WriteCommand(0xB0 + i);
-        ssd1306_WriteCommand(0x00);
-        ssd1306_WriteCommand(0x10);
-        ssd1306_WriteData(&SSD1306_Buffer[SSD1306_WIDTH*i],SSD1306_WIDTH);
     }
 }
 
@@ -259,6 +259,7 @@ void SSD1306::ssd1306_SetCursor(uint8_t x, uint8_t y) {
 
 SSD1306::SSD1306() {
 	// TODO Auto-generated constructor stub
+	counter=0;
 }
 
 SSD1306::~SSD1306() {

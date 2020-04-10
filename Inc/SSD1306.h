@@ -43,6 +43,7 @@
 #define SSD1306_I2C_PORT		hi2c1
 #endif
 
+
 #ifndef SSD1306_I2C_ADDR
 #define SSD1306_I2C_ADDR        (0x3C << 1)
 #endif
@@ -108,7 +109,6 @@ public:
 	// Procedure definitions
 	void ssd1306_Init(void);
 	void ssd1306_Fill(SSD1306_COLOR color);
-	void ssd1306_UpdateScreen(void);
 	void ssd1306_DrawPixel(uint8_t x, uint8_t y, SSD1306_COLOR color);
 	char ssd1306_WriteChar(char ch, FontDef Font, SSD1306_COLOR color);
 	char ssd1306_WriteString(char* str, FontDef Font, SSD1306_COLOR color);
@@ -117,13 +117,19 @@ public:
 
 	// Low-level procedures
 	void ssd1306_Reset(void);
-	void ssd1306_WriteCommand(uint8_t byte);
-	void ssd1306_WriteData(uint8_t* buffer, size_t buff_size);
+	void ssd1306_WriteCommand();
+	void ssd1306_WriteData();
 private:
+	void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
     uint16_t currentX;
     uint16_t currentY;
     uint8_t inverted;
     uint8_t initialized;
+    uint8_t status;
+    uint8_t initCommands[28];
+    uint8_t lineCommands[3];
+    uint8_t SSD1306_Buffer[SSD1306_WIDTH * SSD1306_HEIGHT /8];
+    uint8_t counter;
 };
 
 
